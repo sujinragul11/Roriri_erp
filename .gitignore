@@ -1,0 +1,21 @@
+# Backups and Archives
+*.zip
+*.tar
+*.gz
+*.rar
+*.7z
+bk_sep18/
+
+# Server and PHP Error Logs
+error_log
+*.log
+
+# Duplicate nested directory
+/ERP/
+
+# OS and IDE Metadata
+Thumbs.db
+Desktop.ini
+.DS_Store
+.vscode/
+.idea/

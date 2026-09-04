@@ -1,0 +1,184 @@
+
+
+<?php 
+session_start();
+$id = $_SESSION['id'];
+?>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Credit and Debit Instructions</title>
+  <link rel="icon" type="image/png" href="/assets/nexgenwhite.png">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .pagination {
+      position: absolute;
+      bottom: 10px;
+      right: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .pagination button {
+      background: #007bff;
+      color: #fff;
+      border: none;
+      padding: 8px 12px;
+      font-size: 16px;
+      border-radius: 4px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    .pagination button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+    }
+    .pagination button:enabled {
+      transition: background 0.3s;
+    }
+    .pagination button:enabled:hover {
+      background: #0056b3;
+    }
+    @media (max-width: 600px) {
+  .rules-container {
+    flex-direction: column;
+  }
+  .pagination {
+    right: 10px;
+    bottom: 20px;
+  }
+}
+.hidden {
+  display: none;
+}
+  .back-btn {
+            margin-left: -850px; /* Add left margin */
+            
+        }
+        .heading {
+            
+            color: rgba(255, 221, 0, 0.7);
+        }
+  </style>
+  
+</head>
+<body>
+ <div class="container mt-5">
+        <?php
+        $trainerRoles = [17]; 
+        if (in_array($_SESSION['role'], $trainerRoles) || $_SESSION['is_admin'] === 'True')  {
+            echo '<a href="https://erp.inforiya.in/index.php" class="btn btn-success back-btn">
+                    <i class="fa fa-arrow-left"></i> Back
+                  </a>';
+        } else {
+            echo '<a href="https://workforce.roririsoft.com//RoririSoftware/employeeDetails.php?id=' . $id . '" class="btn btn-success back-btn">
+                    <i class="fa fa-arrow-left"></i> Back
+                  </a>';
+        }
+        ?>
+
+     <h1 style="color: rgba(255, 221, 0, 0.7);">Employee Credit and Debit Points</h1>
+    <section class="instructions">
+     
+      <p>
+        Ensure secure and efficient tracking of employee performance using the guidelines for credit and debit points. These rules help in maintaining a productive and disciplined work environment.
+      </p>
+    </section>
+
+    <div class="rules-container">
+      <div class="rule-card credit">
+        <h2>Credit Points</h2>
+        <ul id="credit-list">
+          <li><strong></strong><b> Employees are awarded credit points for adhering to the following practices:</b></li>
+          <li><strong>1.</strong> Punctuality: Arriving at work on time consistently.</li>
+          <li><strong>2.</strong> Work Reporting: Regularly reporting daily work progress.</li>
+          <li><strong>3.</strong> Timely Updates: Updating the coordinator’s report as scheduled.</li>
+          <li><strong>4.</strong> Task Completion: Completing assigned tasks by the due date.</li>
+          <li><strong>5.</strong> Revenue-Generating Initiatives: Successfully completing any revenue-generating plans will earn the employee an additional credit point.</li>
+          <li><strong>6.</strong> Attendance: Avoiding uninformed absences.</li>
+          <li><strong>7.</strong> Asset Care: Proper maintenance of office assets and resources.</li>
+          <li><strong>8.</strong> Professional Communication: Answering official calls courteously and professionally.</li>
+          <li><strong>9.</strong> Discipline: Maintaining discipline within office and garden areas.</li>
+          <li><strong>10.</strong> Dress Code Compliance: Wearing proper formal attire during weekdays.</li>
+        </ul>
+        <div class="pagination" id="credit-pagination">
+            <button id="credit-prev" disabled>&lt;</button>
+            <button id="credit-next">&gt;</button>
+          </div>
+      </div>
+      
+      <div class="rule-card debit">
+        <h2>Debit Points</h2>
+        <ul id="debit-list">
+          <li><strong><b></strong> Debit points are issued for any non-compliance with the above standards:</b></li>
+          <li><strong>1.</strong> Late Arrival or habitual tardiness.</li>
+          <li><strong>2.</strong> Lack of Work Reporting or irregular reporting.</li>
+          <li><strong>3.</strong> Delayed Updates: Failing to update the coordinator’s report on time.</li>
+          <li><strong>4.</strong> Incomplete Tasks: Not completing assigned tasks by the due date.</li>
+          <li><strong>5.</strong> Uninformed Absences.</li>
+          <li><strong>6.</strong> Negligence with Office Assets: Failing to maintain or damaging office property.</li>
+          <li><strong>7.</strong> Improper Communication: Unprofessional handling of official calls.</li>
+          <li><strong>8.</strong> Disciplinary Issues: Any form of misconduct or breach of decorum within office premises.</li>
+          <li><strong>9.</strong> Dress Code Violations: Not adhering to formal dress code requirements.</li>
+        </ul>
+        <div class="pagination" id="debit-pagination">
+            <button id="debit-prev" disabled>&lt;</button>
+            <button id="debit-next">&gt;</button>
+          </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+   function paginateList(listId, prevBtnId, nextBtnId, itemsPerPage) {
+  const list = document.getElementById(listId);
+  const prevBtn = document.getElementById(prevBtnId);
+  const nextBtn = document.getElementById(nextBtnId);
+  const items = list.getElementsByTagName("li");
+  const totalItems = items.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  let currentPage = 1;
+
+  if (totalItems === 0) {
+    prevBtn.disabled = true;
+    nextBtn.disabled = true;
+    return;
+  }
+
+  function showPage(pageNumber) {
+    console.log(`Showing page ${pageNumber}`);
+    for (let i = 0; i < totalItems; i++) {
+      items[i].classList.add("hidden");
+    }
+    const start = (pageNumber - 1) * itemsPerPage;
+    const end = start + itemsPerPage;
+    for (let i = start; i < end && i < totalItems; i++) {
+      items[i].classList.remove("hidden");
+    }
+    prevBtn.disabled = pageNumber === 1;
+    nextBtn.disabled = pageNumber === totalPages;
+    currentPage = pageNumber;
+  }
+
+  prevBtn.addEventListener("click", () => {
+    if (currentPage > 1) showPage(currentPage - 1);
+  });
+
+  nextBtn.addEventListener("click", () => {
+    if (currentPage < totalPages) showPage(currentPage + 1);
+  });
+
+  showPage(1);
+}
+
+paginateList("credit-list", "credit-prev", "credit-next", 6);
+paginateList("debit-list", "debit-prev", "debit-next", 6);
+
+  </script>
+   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
